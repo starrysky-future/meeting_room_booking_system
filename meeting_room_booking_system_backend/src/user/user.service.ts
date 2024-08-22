@@ -71,7 +71,7 @@ export class UserService {
   }
 
   async loginCaptcha(address: string) {
-    const code = this.Captcha(`captcha_${address}`);
+    const code = await this.Captcha(`captcha_${address}`);
     await this.emailService.sendMail({
       to: address,
       subject: '注册验证码',
@@ -82,7 +82,7 @@ export class UserService {
   }
 
   async updatePasswordCaptcha(address: string) {
-    const code = this.Captcha(`update_password_captcha_${address}`);
+    const code = await this.Captcha(`update_password_captcha_${address}`);
     await this.emailService.sendMail({
       to: address,
       subject: '更改密码验证码',
@@ -93,7 +93,7 @@ export class UserService {
   }
 
   async updateUserInfoCaptcha(address: string) {
-    const code = this.Captcha(`update_user_info_captcha_${address}`);
+    const code = await this.Captcha(`update_user_info_captcha_${address}`);
     await this.emailService.sendMail({
       to: address,
       subject: '修改用户信息验证码',
