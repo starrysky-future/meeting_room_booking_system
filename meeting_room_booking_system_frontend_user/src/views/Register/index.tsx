@@ -1,9 +1,10 @@
 import { useCallback } from "react";
 import { Button, Form, Input, message } from "antd";
 import "./index.css";
-import { register, registerCaptcha } from "@api/";
+import { register, registerCaptcha } from "@api/index";
 import { useForm } from "antd/es/form/Form";
 import { Link, useNavigate } from "react-router-dom";
+import { layout6_18, layout0_24 } from "../layout";
 
 export interface RegisterUser {
   username: string;
@@ -13,16 +14,6 @@ export interface RegisterUser {
   email: string;
   captcha: string;
 }
-
-const layout1 = {
-  labelCol: { span: 6 },
-  wrapperCol: { span: 18 },
-};
-
-const layout2 = {
-  labelCol: { span: 0 },
-  wrapperCol: { span: 24 },
-};
 
 export function Register() {
   const [form] = useForm();
@@ -64,7 +55,7 @@ export function Register() {
       <h1>会议室预订系统</h1>
       <Form
         form={form}
-        {...layout1}
+        {...layout6_18}
         onFinish={onFinish}
         colon={false}
         autoComplete="off"
@@ -125,13 +116,13 @@ export function Register() {
           </Button>
         </div>
 
-        <Form.Item {...layout2}>
+        <Form.Item {...layout0_24}>
           <div className="links">
             已有账号？去<Link to="/login">登录</Link>
           </div>
         </Form.Item>
 
-        <Form.Item {...layout1} label=" ">
+        <Form.Item {...layout6_18} label=" ">
           <Button className="btn" type="primary" htmlType="submit">
             注册
           </Button>

@@ -1,23 +1,14 @@
 import { useCallback } from "react";
 import { Button, Form, Input, message } from "antd";
 import "./index.css";
-import { login } from "@api/";
+import { login } from "@api/index";
 import { Link, useNavigate } from "react-router-dom";
+import { layout4_20, layout0_24 } from "../layout";
 
 export interface LoginUser {
   username: string;
   password: string;
 }
-
-const Layout1 = {
-  labelCol: { span: 4 },
-  wrapperCol: { span: 20 },
-};
-
-const layout2 = {
-  labelCol: { span: 0 },
-  wrapperCol: { span: 24 },
-};
 
 export function Login() {
   const navigate = useNavigate();
@@ -44,7 +35,12 @@ export function Login() {
   return (
     <div id="login-container">
       <h1>会议室预定系统</h1>
-      <Form {...Layout1} onFinish={onFinish} colon={false} autoComplete="off">
+      <Form
+        {...layout4_20}
+        onFinish={onFinish}
+        colon={false}
+        autoComplete="off"
+      >
         <Form.Item
           label="用户名"
           name="username"
@@ -60,14 +56,14 @@ export function Login() {
           <Input.Password />
         </Form.Item>
 
-        <Form.Item {...layout2}>
+        <Form.Item {...layout0_24}>
           <div className="links">
             <Link to="/register">创建账号</Link>
             <Link to="/update_password">忘记密码</Link>
           </div>
         </Form.Item>
 
-        <Form.Item {...layout2}>
+        <Form.Item {...layout0_24}>
           <Button className="btn" type="primary" htmlType="submit">
             登录
           </Button>

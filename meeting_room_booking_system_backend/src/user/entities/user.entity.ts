@@ -17,6 +17,7 @@ export class UserEntity {
   @Column({
     length: 50,
     comment: '用户名',
+    unique: true,
   })
   username: string;
 

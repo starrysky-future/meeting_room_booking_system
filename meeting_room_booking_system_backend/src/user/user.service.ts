@@ -164,6 +164,7 @@ export class UserService {
     return {
       id: user.id,
       username: user.username,
+      email: user.email,
       isAdmin: user.isAdmin,
       roles: user.roles.map((item) => item.name),
       permissions: user.roles.reduce((arr, item) => {
@@ -195,7 +196,7 @@ export class UserService {
     return vo;
   }
 
-  async updatePassword(userId: number, passwordDto: UpdateUserPasswordDto) {
+  async updatePassword(passwordDto: UpdateUserPasswordDto) {
     try {
       await this.verifyCaptcha(
         passwordDto.captcha,
@@ -206,8 +207,12 @@ export class UserService {
     }
 
     const foundUser = await this.userRepository.findOneBy({
-      id: userId,
+      username: passwordDto.username,
     });
+
+    if (passwordDto.email !== foundUser.email) {
+      throw new BadRequestException('邮箱地址不正确');
+    }
 
     foundUser.password = md5(passwordDto.password);
 

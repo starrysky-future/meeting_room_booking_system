@@ -8,16 +8,19 @@ import {
   UnauthorizedException,
   DefaultValuePipe,
   HttpStatus,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { RequireLogin, UserInfo } from 'src/custom.decorator';
+import { RequireLogin, UserInfo } from 'src/decorator/custom.decorator';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserInfoDto } from './dto/update-user-info.dto';
-import { generateParseIntPipe } from 'src/utils';
+import { generateParseIntPipe, storage } from 'src/utils';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -28,6 +31,8 @@ import {
 import { LoginUserVo } from './vo/login-user.vo';
 import { RefreshTokenVo } from './vo/refresh-token.vo';
 import { UserDetailVo, UserListVo } from './vo/user-info.vo';
+import { FileInterceptor } from '@nestjs/platform-express';
+import * as path from 'path';
 
 @ApiTags('用户管理模块')
 @Controller('user')
@@ -79,7 +84,6 @@ export class UserController {
     return await this.userService.loginCaptcha(address);
   }
 
-  @ApiBearerAuth()
   @ApiQuery({
     type: String,
     name: 'address',
@@ -93,19 +97,11 @@ export class UserController {
     description: '发送成功',
   })
   @Get('updatePassword/captcha')
-  @RequireLogin()
   async updatePasswordCaptcha(@Query('address') address: string) {
     return await this.userService.updatePasswordCaptcha(address);
   }
 
   @ApiBearerAuth()
-  @ApiQuery({
-    type: String,
-    name: 'address',
-    description: '邮箱地址',
-    required: true,
-    example: 'xxxx@xx.com',
-  })
   @ApiResponse({
     type: String,
     status: HttpStatus.OK,
@@ -113,7 +109,7 @@ export class UserController {
   })
   @Get('updateUserInfo/captcha')
   @RequireLogin()
-  async updateUserInfoCaptcha(@Query('address') address: string) {
+  async updateUserInfoCaptcha(@UserInfo('email') address: string) {
     return await this.userService.updateUserInfoCaptcha(address);
   }
 
@@ -201,7 +197,6 @@ export class UserController {
     return await this.userService.finduserDetailById(userId);
   }
 
-  @ApiBearerAuth()
   @ApiBody({
     type: UpdateUserPasswordDto,
   })
@@ -216,12 +211,8 @@ export class UserController {
     description: '验证码已失效/不正确',
   })
   @Post(['updatePassword', 'admin/updatePassword'])
-  @RequireLogin()
-  async updatePassword(
-    @UserInfo('userId') userId: number,
-    @Body() passwordDto: UpdateUserPasswordDto,
-  ) {
-    return await this.userService.updatePassword(userId, passwordDto);
+  async updatePassword(@Body() passwordDto: UpdateUserPasswordDto) {
+    return await this.userService.updatePassword(passwordDto);
   }
 
   @ApiBearerAuth()
@@ -317,6 +308,28 @@ export class UserController {
     );
   }
 
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: storage,
+      limits: {
+        fileSize: 1024 * 1024 * 3,
+      },
+      fileFilter: (req, file, callback) => {
+        const extname = path.extname(file.originalname);
+
+        if (['.png', '.jpg', '.gif'].includes(extname)) {
+          callback(null, true);
+        } else {
+          callback(new BadRequestException('只能上传图片'), false);
+        }
+      },
+    }),
+  )
+  uploadFile(@UploadedFile() file: Express.Multer.File) {
+    return file.path;
+  }
+
   async refreshJwtVerify(refreshToken: string, isAdmin: boolean) {
     try {
       const data = this.jwtService.verify(refreshToken);
@@ -342,6 +355,7 @@ export class UserController {
       {
         userId: user.id,
         username: user.username,
+        email: user.email,
         roles: user.roles,
         permissions: user.permissions,
       },
