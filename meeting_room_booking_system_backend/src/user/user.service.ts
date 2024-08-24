@@ -255,12 +255,12 @@ export class UserService {
     }
   }
 
-  async freezeUserById(userId: number) {
+  async freezeUserById(userId: number, isFrozen: boolean) {
     const foundUser = await this.userRepository.findOneBy({
       id: userId,
     });
 
-    foundUser.isFrozen = true;
+    foundUser.isFrozen = isFrozen;
     await this.userRepository.save(foundUser);
   }
 

@@ -11,6 +11,8 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  ParseBoolPipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { RegisterDto } from './dto/register.dto';
@@ -239,6 +241,16 @@ export class UserController {
   }
 
   @ApiBearerAuth()
+  @ApiQuery({
+    type: Number,
+    name: 'id',
+    description: '用户id',
+  })
+  @ApiQuery({
+    type: Boolean,
+    name: 'isFrozen',
+    description: 'ture解冻,false冻结',
+  })
   @ApiResponse({
     type: String,
     status: HttpStatus.OK,
@@ -246,8 +258,11 @@ export class UserController {
   })
   @Get('freeze')
   @RequireLogin()
-  async freeze(@Query('id') userId: number) {
-    await this.userService.freezeUserById(userId);
+  async freeze(
+    @Query('id', ParseIntPipe) userId: number,
+    @Query('isFrozen', ParseBoolPipe) isFrozen: boolean,
+  ) {
+    await this.userService.freezeUserById(userId, isFrozen);
 
     return 'success';
   }

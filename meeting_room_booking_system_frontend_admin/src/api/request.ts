@@ -73,7 +73,7 @@ axiosInstance.interceptors.response.use(
 
 async function refreshToken() {
   const res = await axiosInstance.get(
-    "/user/refresh?refreshToken=" + localStorage.getItem("refresh_token")
+    "/user/admin/refresh?refreshToken=" + localStorage.getItem("refresh_token")
   );
 
   localStorage.setItem("access_token", res.data.data.accessToken || "");

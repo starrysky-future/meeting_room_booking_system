@@ -3,13 +3,13 @@ import { Login } from "@/views/Login";
 import { UpdatePassword } from "@/views/UpdatePassword";
 import { ErrorPage } from "@/views/ErrorPage";
 import { Register } from "@/views/Register";
-import { Index } from "@/views/main/index";
-import { UpdateInfo } from "@/views/main/updateInfo";
+import { Main } from "@/views/Main/index";
+import { UpdateInfo } from "@/views/Main/updateInfo";
 
 const routes: RouteObject[] = [
   {
     path: "/",
-    element: <Index />,
+    element: <Main />,
     errorElement: <ErrorPage />,
     children: [
       {

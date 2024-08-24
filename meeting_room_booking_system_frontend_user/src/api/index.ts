@@ -2,7 +2,7 @@ import http from "./request";
 import type { LoginUser } from "@/views/Login";
 import type { RegisterUser } from "@/views/Register";
 import type { UpdatePassword } from "@/views/UpdatePassword";
-import type { UserInfo } from "@/views/main//updateInfo";
+import type { UserInfo } from "@/views/Main/updateInfo";
 
 export async function login(loginUser: LoginUser) {
   return await http.post("/user/login", loginUser);
@@ -13,7 +13,11 @@ export async function register(registerUser: RegisterUser) {
 }
 
 export async function registerCaptcha(address: string) {
-  return await http.get("/user/register/captcha?address=" + address);
+  return await http.get("/user/register/captcha", {
+    params: {
+      address,
+    },
+  });
 }
 
 export async function updatePassword(updatePassword: UpdatePassword) {
@@ -21,7 +25,11 @@ export async function updatePassword(updatePassword: UpdatePassword) {
 }
 
 export async function updatePasswordCaptcha(address: string) {
-  return await http.get("/user/updatePassword/captcha?address=" + address);
+  return await http.get("/user/updatePassword/captcha", {
+    params: {
+      address,
+    },
+  });
 }
 
 export async function getUserInfo() {
