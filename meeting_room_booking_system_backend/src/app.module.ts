@@ -10,6 +10,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { APP_GUARD } from '@nestjs/core';
 import { LoginGuard } from './guard/login.guard';
 import { PermissionGuard } from './guard/permission.guard';
+import { MeetingRoomModule } from './meeting-room/meeting-room.module';
+import { BookingModule } from './booking/booking.module';
 
 @Module({
   imports: [
@@ -49,6 +51,8 @@ import { PermissionGuard } from './guard/permission.guard';
     UserModule,
     RedisModule,
     EmailModule,
+    MeetingRoomModule,
+    BookingModule,
   ],
   controllers: [AppController],
   providers: [

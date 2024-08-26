@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from './entities/user.entity';
-import { Like, Repository } from 'typeorm';
+import { FindOperator, Like, Repository } from 'typeorm';
 import { RegisterDto } from './dto/register.dto';
 import { RedisService } from 'src/redis/redis.service';
 import { md5 } from 'src/utils';
@@ -273,7 +273,7 @@ export class UserService {
   ) {
     const skipPage = (pageNo - 1) * pageSize;
 
-    const condition: Record<string, any> = {};
+    const condition: Record<string, FindOperator<string>> = {};
 
     if (username) {
       condition.username = Like(`%${username}%`);
