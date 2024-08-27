@@ -1,6 +1,6 @@
 import { UserOutlined } from "@ant-design/icons";
 import { Outlet } from "react-router-dom";
-import "./style/index.css";
+import "./index.css";
 
 export function Main() {
   return (

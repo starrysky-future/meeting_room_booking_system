@@ -1,6 +1,6 @@
 import http from "./request";
 import type { LoginUser } from "@/views/Login";
-import type { SearchParams } from "@/views/Main/UserManage";
+import type { SearchParams } from "@/views/UserManage";
 
 export async function login(loginUser: LoginUser) {
   return await http.post("/user/admin/login", loginUser);

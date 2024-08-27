@@ -2,8 +2,11 @@ import { createBrowserRouter, RouteObject } from "react-router-dom";
 import { ErrorPage } from "@/views/ErrorPage";
 import { Login } from "@/views/Login";
 import { Main } from "@/views/Main";
-import { UserManage } from "@/views/Main/UserManage";
-import { Menu } from "@/views/Main/Menu";
+import { UserManage } from "@/views/UserManage";
+import { Menu } from "@/views/Menu";
+import { MeetingRoomManage } from "@/views/MeetingRoomManage";
+import { BookingManage } from "@/views/BookingManage";
+import { Statistics } from "@/views/Statistics";
 
 const routes: RouteObject[] = [
   {
@@ -18,6 +21,18 @@ const routes: RouteObject[] = [
           {
             path: "user_manage",
             element: <UserManage />,
+          },
+          {
+            path: "meeting_room_manage",
+            element: <MeetingRoomManage />,
+          },
+          {
+            path: "booking_manage",
+            element: <BookingManage />,
+          },
+          {
+            path: "statistics",
+            element: <Statistics />,
           },
         ],
       },

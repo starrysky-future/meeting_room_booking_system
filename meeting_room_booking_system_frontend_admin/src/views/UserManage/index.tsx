@@ -1,6 +1,6 @@
 import { Button, Form, Input, Table, message, Image, Badge } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import "./style/UserManage.css";
+import "./index.css";
 import { ColumnsType } from "antd/es/table";
 import { getList, freeze } from "@api/index";
 import { BASE_URL } from "@api/request";

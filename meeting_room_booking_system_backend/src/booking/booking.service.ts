@@ -149,13 +149,15 @@ export class BookingService {
       this.redisService.set('admin_email', email);
     }
 
-    this.emailService.sendMail({
+    await this.emailService.sendMail({
       to: email,
       subject: '预定申请催办提醒',
       html: `id:${id}的预定申请正在等待审批`,
     });
 
     this.redisService.set('urge_' + id, 1, 60 * 30);
+
+    return 'success';
   }
 
   async initData() {
