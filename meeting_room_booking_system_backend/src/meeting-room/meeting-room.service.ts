@@ -24,13 +24,9 @@ export class MeetingRoomService {
       throw new BadRequestException('会议室名字已存在！');
     }
 
-    try {
-      await this.meetingRoomReposition.insert(createMeetingRoomDto);
+    await this.meetingRoomReposition.insert(createMeetingRoomDto);
 
-      return '创建成功';
-    } catch (error) {
-      throw new InternalServerErrorException('服务器出错，请稍后重试！');
-    }
+    return '创建成功';
   }
 
   async update(updateMeetingRoomDto: UpdateMeetingRoomDto) {
@@ -58,20 +54,12 @@ export class MeetingRoomService {
   }
 
   async delete(id: number) {
-    try {
-      await this.meetingRoomReposition.delete({ id });
-      return '删除成功';
-    } catch (error) {
-      throw new InternalServerErrorException('服务器出错，请稍后重试！');
-    }
+    await this.meetingRoomReposition.delete({ id });
+    return '删除成功';
   }
 
   async findById(id: number) {
-    try {
-      return await this.meetingRoomReposition.findOneBy({ id });
-    } catch (error) {
-      throw new InternalServerErrorException('服务器出错，请稍后重试！');
-    }
+    return await this.meetingRoomReposition.findOneBy({ id });
   }
 
   async list(
@@ -102,20 +90,16 @@ export class MeetingRoomService {
       condition.equipment = Like(`%${equipment}%`);
     }
 
-    try {
-      const [list, totalCount] = await this.meetingRoomReposition.findAndCount({
-        where: condition,
-        skip: skip,
-        take: pageSize,
-      });
+    const [list, totalCount] = await this.meetingRoomReposition.findAndCount({
+      where: condition,
+      skip: skip,
+      take: pageSize,
+    });
 
-      return {
-        list,
-        totalCount,
-      };
-    } catch (error) {
-      throw new InternalServerErrorException('服务器出错，请稍后重试！');
-    }
+    return {
+      list,
+      totalCount,
+    };
   }
 
   initData() {

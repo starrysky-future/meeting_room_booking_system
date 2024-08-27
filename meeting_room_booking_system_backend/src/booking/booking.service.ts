@@ -88,57 +88,41 @@ export class BookingService {
       );
     }
 
-    try {
-      const [list, totalCount] = await this.bookingRepository.findAndCount({
-        where: condition,
-        relations: {
-          user: true,
-          room: true,
-        },
-        skip: skip,
-        take: pageSize,
-      });
+    const [list, totalCount] = await this.bookingRepository.findAndCount({
+      where: condition,
+      relations: {
+        user: true,
+        room: true,
+      },
+      skip: skip,
+      take: pageSize,
+    });
 
-      return {
-        list: list.map((item) => {
-          delete item.user.password;
-          return item;
-        }),
-        totalCount,
-      };
-    } catch (error) {
-      throw new InternalServerErrorException('服务器出错，请稍后重试！');
-    }
+    return {
+      list: list.map((item) => {
+        delete item.user.password;
+        return item;
+      }),
+      totalCount,
+    };
   }
 
   async apply(id: number) {
-    try {
-      await this.bookingRepository.update({ id }, { status: '审批通过' });
+    await this.bookingRepository.update({ id }, { status: '审批通过' });
 
-      return 'success';
-    } catch (error) {
-      throw new InternalServerErrorException('服务器出错，请稍后重试！');
-    }
+    return 'success';
   }
 
   async reject(id: number) {
-    try {
-      await this.bookingRepository.update({ id }, { status: '审批驳回' });
+    await this.bookingRepository.update({ id }, { status: '审批驳回' });
 
-      return 'success';
-    } catch (error) {
-      throw new InternalServerErrorException('服务器出错，请稍后重试！');
-    }
+    return 'success';
   }
 
   async unbind(id: number) {
-    try {
-      await this.bookingRepository.update({ id }, { status: '已解除' });
+    await this.bookingRepository.update({ id }, { status: '已解除' });
 
-      return 'success';
-    } catch (error) {
-      throw new InternalServerErrorException('服务器出错，请稍后重试！');
-    }
+    return 'success';
   }
 
   async urge(id: number) {
