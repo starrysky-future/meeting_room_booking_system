@@ -5,7 +5,7 @@ export class MeetingRoomListVo {
   @ApiProperty({
     type: [MeetingRoomVo],
   })
-  users: Array<MeetingRoomVo>;
+  list: Array<MeetingRoomVo>;
 
   @ApiProperty()
   totalCount: number;

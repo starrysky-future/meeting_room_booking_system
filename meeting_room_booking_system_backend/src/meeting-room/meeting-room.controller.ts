@@ -54,6 +54,11 @@ export class MeetingRoomController {
     required: false,
   })
   @ApiQuery({
+    name: 'location',
+    type: String,
+    required: false,
+  })
+  @ApiQuery({
     name: 'equipment',
     type: String,
     required: false,

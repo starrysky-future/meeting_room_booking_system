@@ -2,7 +2,7 @@ import { Button, Form, Input, Table, message, Image, Badge } from "antd";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import "./index.css";
 import { ColumnsType } from "antd/es/table";
-import { getList, freeze } from "@api/index";
+import { getUserList, freeze } from "@api/index";
 import { BASE_URL } from "@api/request";
 import { useForm } from "antd/es/form/Form";
 
@@ -12,12 +12,12 @@ interface SearchUser {
   email: string;
 }
 
-export interface SearchParams extends Partial<SearchUser> {
+export interface SearchUserParams extends SearchUser {
   pageNo: number;
   pageSize: number;
 }
 
-interface UserSearchResult {
+export interface UserSearchResult {
   id: number;
   username: string;
   nickName: string;
@@ -108,10 +108,8 @@ export function UserManage() {
 
   const searchUser = useCallback(
     async (values: SearchUser) => {
-      const res = await getList({
-        username: values.username,
-        nickName: values.nickName,
-        email: values.email,
+      const res = await getUserList({
+        ...values,
         pageNo,
         pageSize,
       });
