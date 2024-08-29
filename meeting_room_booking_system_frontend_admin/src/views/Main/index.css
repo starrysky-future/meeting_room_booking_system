@@ -21,3 +21,8 @@
 #main-container .body{
     flex: 1;
 }
+
+#main-container .sys_name {
+    text-decoration: none;
+    color: #000;
+}

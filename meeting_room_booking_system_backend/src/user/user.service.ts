@@ -247,7 +247,7 @@ export class UserService {
     }
 
     try {
-      await this.userRepository.save(foundUser);
+      await this.userRepository.update({ id: userId }, foundUser);
       return '用户信息修改成功';
     } catch (e) {
       this.logger.error(e, UserService);

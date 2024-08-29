@@ -7,6 +7,8 @@ import type {
 } from "@/views/MeetingRoomManage";
 import type { SearchBookingParams } from "@/views/BookingManage";
 import dayjs from "dayjs";
+import { UserInfo } from "@/views/InfoModify";
+import { UpdatePassword } from "@/views/PasswordModify";
 
 export async function login(loginUser: LoginUser) {
   return await http.post("/user/admin/login", loginUser);
@@ -21,6 +23,30 @@ export async function getUserList(searchParams: SearchUserParams) {
 
 export async function freeze(id: number, isFrozen: boolean) {
   return await http.get("/user/freeze", { params: { id, isFrozen } });
+}
+
+export async function getUserInfo() {
+  return await http.get("/user/info");
+}
+
+export async function updateInfo(data: UserInfo) {
+  return await http.post("/user/admin/updateUserInfo", data);
+}
+
+export async function updateUserInfoCaptcha() {
+  return await http.get("/user/updateUserInfo/captcha");
+}
+
+export async function updatePasswordCaptcha(email: string) {
+  return await http.get("/user/updatePassword/captcha", {
+    params: {
+      address: email,
+    },
+  });
+}
+
+export async function updatePassword(data: UpdatePassword) {
+  return await http.post("/user/admin/updatePassword", data);
 }
 
 // 会议室管理

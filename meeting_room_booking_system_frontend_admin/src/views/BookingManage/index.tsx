@@ -113,14 +113,24 @@ export function BookingManage() {
     },
   ];
 
-  const searchBooking = useCallback(async (values: SearchBooking) => {
-    const res = await getBookingList({ ...values, pageNo, pageSize });
+  const searchBooking = useCallback(
+    async (values: SearchBooking) => {
+      const res = await getBookingList({ ...values, pageNo, pageSize });
 
-    const { data } = res.data;
-    if (res.status === 200 || res.status === 201) {
-      // setBookingSearchResult()
-    }
-  }, []);
+      const { data } = res.data;
+      if (res.status === 200 || res.status === 201) {
+        setBookingSearchResult(
+          data.list.map((item: BookingSearchResult) => {
+            return {
+              key: item.id,
+              ...item,
+            };
+          })
+        );
+      }
+    },
+    [pageNo, pageSize]
+  );
 
   const [form] = useForm();
 
