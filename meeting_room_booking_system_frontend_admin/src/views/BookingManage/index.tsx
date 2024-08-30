@@ -1,9 +1,11 @@
 import {
   Button,
+  ConfigProvider,
   DatePicker,
   Form,
   Input,
   Popconfirm,
+  Space,
   Table,
   TimePicker,
   message,
@@ -15,7 +17,7 @@ import "./index.css";
 import { UserSearchResult } from "../UserManage/index";
 import { MeetingRoomSearchResult } from "../MeetingRoomManage/index";
 import dayjs from "dayjs";
-import { getBookingList } from "@api/index";
+import { apply, getBookingList, reject, unbind } from "@api/index";
 
 export interface SearchBooking {
   username: string;
@@ -51,6 +53,7 @@ export function BookingManage() {
     Array<BookingSearchResult>
   >([]);
   const [num, setNum] = useState(0);
+  const [total, setTotal] = useState(0);
 
   const columns: ColumnsType<BookingSearchResult> = [
     {
@@ -91,6 +94,25 @@ export function BookingManage() {
     {
       title: "审批状态",
       dataIndex: "status",
+      onFilter: (value, record) => record.status.startsWith(value as string),
+      filters: [
+        {
+          text: "审批通过",
+          value: "审批通过",
+        },
+        {
+          text: "审批驳回",
+          value: "审批驳回",
+        },
+        {
+          text: "申请中",
+          value: "申请中",
+        },
+        {
+          text: "已解除",
+          value: "已解除",
+        },
+      ],
     },
     {
       title: "预定时间",
@@ -109,7 +131,39 @@ export function BookingManage() {
     },
     {
       title: "操作",
-      render: (_, record) => <div></div>,
+      render: (_, record) => (
+        <div>
+          <Popconfirm
+            title="通过申请"
+            description="确认通过申请吗?"
+            okText="确认"
+            cancelText="取消"
+            onConfirm={() => changeStatus(record.id, "apply")}
+          >
+            <a href="#">通过</a>
+          </Popconfirm>
+          <br />
+          <Popconfirm
+            title="驳回申请"
+            description="确认驳回申请吗?"
+            okText="确认"
+            cancelText="取消"
+            onConfirm={() => changeStatus(record.id, "reject")}
+          >
+            <a href="#">驳回</a>
+          </Popconfirm>
+          <br />
+          <Popconfirm
+            title="解除申请"
+            description="确认解除申请吗?"
+            okText="确认"
+            cancelText="取消"
+            onConfirm={() => changeStatus(record.id, "unbind")}
+          >
+            <a href="#">解除</a>
+          </Popconfirm>
+        </div>
+      ),
     },
   ];
 
@@ -127,6 +181,8 @@ export function BookingManage() {
             };
           })
         );
+
+        setTotal(data.totalCount);
       }
     },
     [pageNo, pageSize]
@@ -146,10 +202,30 @@ export function BookingManage() {
     });
   }, [pageNo, pageSize, num]);
 
-  const changePage = function (pageNo: number, pageSize: number) {
+  const changePage = useCallback((pageNo: number, pageSize: number) => {
     setPageNo(pageNo);
     setPageSize(pageSize);
-  };
+  }, []);
+
+  const changeStatus = useCallback(
+    async (id: number, status: "apply" | "reject" | "unbind") => {
+      const methods = {
+        apply,
+        reject,
+        unbind,
+      };
+
+      const res = await methods[status](id);
+
+      if (res.status === 201 || res.status === 200) {
+        message.success("状态更新成功");
+        setNum(Math.random());
+      } else {
+        message.error(res.data.data);
+      }
+    },
+    []
+  );
 
   return (
     <div id="bookingManage-container">
@@ -169,6 +245,10 @@ export function BookingManage() {
             <Input />
           </Form.Item>
 
+          <Form.Item label="位置" name="meetingRoomPosition">
+            <Input />
+          </Form.Item>
+
           <Form.Item label="预定开始日期" name="rangeStartDate">
             <DatePicker />
           </Form.Item>
@@ -185,10 +265,6 @@ export function BookingManage() {
             <TimePicker />
           </Form.Item>
 
-          <Form.Item label="位置" name="meetingRoomPosition">
-            <Input />
-          </Form.Item>
-
           <Form.Item label=" ">
             <Button type="primary" htmlType="submit">
               搜索预定申请
@@ -201,6 +277,8 @@ export function BookingManage() {
           columns={columns}
           dataSource={bookingSearchResult}
           pagination={{
+            total: total,
+            showSizeChanger: true,
             current: pageNo,
             pageSize: pageSize,
             onChange: changePage,

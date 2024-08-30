@@ -21,7 +21,7 @@ export class StatisticController {
     name: 'endTime',
   })
   @ApiResponse({
-    type: UserBookingCountVo,
+    type: [UserBookingCountVo],
   })
   @Get('userBookingCount')
   async userBookingCount(
@@ -40,7 +40,7 @@ export class StatisticController {
     name: 'endTime',
   })
   @ApiResponse({
-    type: MeetingRoomUsedCountVo,
+    type: [MeetingRoomUsedCountVo],
   })
   @Get('meetingRoomUsedCount')
   async meetingRoomUsedCount(

@@ -83,6 +83,8 @@ export async function getBookingList(searchBookingParams: SearchBookingParams) {
   let bookingTimeRangeStart;
   let bookingTimeRangeEnd;
 
+  console.log("searchBookingParams", searchBookingParams);
+
   if (
     searchBookingParams.rangeStartDate &&
     searchBookingParams.rangeStartTime
@@ -112,7 +114,13 @@ export async function getBookingList(searchBookingParams: SearchBookingParams) {
 
   return await http.get("/booking/list", {
     params: {
-      searchBookingParams,
+      username: searchBookingParams.username,
+      meetingRoomName: searchBookingParams.meetingRoomName,
+      meetingRoomPosition: searchBookingParams.meetingRoomPosition,
+      pageNo: searchBookingParams.pageNo,
+      pageSize: searchBookingParams.pageSize,
+      bookingTimeRangeStart,
+      bookingTimeRangeEnd,
     },
   });
 }
@@ -127,4 +135,23 @@ export async function reject(id: number) {
 
 export async function unbind(id: number) {
   return await http.get("/booking/unbind/" + id);
+}
+
+// 统计
+export async function meetingRoomUsedCount(startTime: string, endTime: string) {
+  return await http.get("/statistic/meetingRoomUsedCount", {
+    params: {
+      startTime,
+      endTime,
+    },
+  });
+}
+
+export async function userBookingCount(startTime: string, endTime: string) {
+  return await http.get("/statistic/userBookingCount", {
+    params: {
+      startTime,
+      endTime,
+    },
+  });
 }
