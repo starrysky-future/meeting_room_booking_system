@@ -4,7 +4,11 @@ import { UpdatePassword } from "@/views/UpdatePassword";
 import { ErrorPage } from "@/views/ErrorPage";
 import { Register } from "@/views/Register";
 import { Main } from "@/views/Main/index";
-import { UpdateInfo } from "@/views/Main/updateInfo";
+import { MeetingRoomList } from "@/views/MeetingRoomList";
+import { BookingHistory } from "@/views/BookingHistory";
+import { Menu } from "@/views/Menu";
+
+import { UpdateInfo } from "@/views/updateInfo";
 
 const routes: RouteObject[] = [
   {
@@ -15,6 +19,24 @@ const routes: RouteObject[] = [
       {
         path: "update_info",
         element: <UpdateInfo />,
+      },
+      {
+        path: "/",
+        element: <Menu />,
+        children: [
+          {
+            path: "/",
+            element: <MeetingRoomList />,
+          },
+          {
+            path: "meeting_room_list",
+            element: <MeetingRoomList />,
+          },
+          {
+            path: "booking_history",
+            element: <BookingHistory />,
+          },
+        ],
       },
     ],
   },

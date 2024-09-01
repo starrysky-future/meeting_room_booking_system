@@ -1,7 +1,9 @@
+import { BookingEntity } from 'src/booking/entity/booking.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -28,6 +30,9 @@ export class MeetingRoomEntity {
 
   @Column({ comment: '是否被预定', default: false })
   isBooked: boolean;
+
+  @OneToMany(() => BookingEntity, (BookingEntity) => BookingEntity.room)
+  bookings: BookingEntity[];
 
   @CreateDateColumn({ comment: '创建时间' })
   createTime: Date;

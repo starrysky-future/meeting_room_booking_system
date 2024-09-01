@@ -1,15 +1,24 @@
 import {
+  BadRequestException,
   Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { BookingEntity } from './entity/booking.entity';
-import { Between, FindOperator, Like, Repository } from 'typeorm';
+import {
+  Between,
+  FindOperator,
+  LessThanOrEqual,
+  Like,
+  MoreThanOrEqual,
+  Repository,
+} from 'typeorm';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { MeetingRoomEntity } from 'src/meeting-room/entities/meeting-room.entity';
 import { RedisService } from 'src/redis/redis.service';
 import { EmailService } from 'src/email/email.service';
+import { CreateBookingDto } from './dto/create-boking.dto';
 
 interface ConditionType {
   user?: {
@@ -38,6 +47,44 @@ export class BookingService {
 
   @Inject(EmailService)
   private emailService: EmailService;
+
+  async add(createBookingDto: CreateBookingDto, userId: number) {
+    const meetingRoom = await this.meetingRoomRepository.findOneBy({
+      id: createBookingDto.meetingRoomId,
+    });
+
+    if (!meetingRoom) {
+      throw new BadRequestException('会议室不存在');
+    }
+
+    const user = await this.userRepository.findOneBy({ id: userId });
+
+    const booking = new BookingEntity();
+    booking.room = meetingRoom;
+    booking.user = user;
+    booking.startTime = new Date(createBookingDto.startTime);
+    booking.endTime = new Date(createBookingDto.endTime);
+
+    if (createBookingDto.note) {
+      booking.note = createBookingDto.note;
+    }
+
+    const res = await this.bookingRepository.findOneBy({
+      room: {
+        id: meetingRoom.id,
+      },
+      startTime: LessThanOrEqual(booking.startTime),
+      endTime: MoreThanOrEqual(booking.endTime),
+    });
+
+    if (res) {
+      throw new BadRequestException('该时段已被预定');
+    }
+
+    await this.bookingRepository.insert(booking);
+
+    return 'success';
+  }
 
   async list(
     pageNo: number,

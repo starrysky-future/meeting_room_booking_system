@@ -22,6 +22,10 @@ const routes: RouteObject[] = [
         element: <Menu></Menu>,
         children: [
           {
+            path: "/",
+            element: <MeetingRoomManage />,
+          },
+          {
             path: "meeting_room_manage",
             element: <MeetingRoomManage />,
           },

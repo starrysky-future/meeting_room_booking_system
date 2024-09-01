@@ -7,7 +7,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "debug nest meeting",
+            "name": "meeting backend",
             "runtimeExecutable": "npm",
             "args": ["run","start:dev"],
             "skipFiles": [

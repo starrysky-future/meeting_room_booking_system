@@ -161,7 +161,7 @@ export function MeetingRoomManage() {
             };
           })
         );
-        setTotal(data.total);
+        setTotal(data.totalCount);
       } else {
         message.error(data || "系统繁忙，请稍后再试");
       }
@@ -175,14 +175,13 @@ export function MeetingRoomManage() {
   }, []);
 
   const handleDelete = useCallback(async (id: number) => {
-    try {
-      await deleteMeetingRoom(id);
+    const res = await deleteMeetingRoom(id);
+
+    const { data } = res.data;
+    if (res.status === 200 || res.status === 201) {
       setNum(Math.random());
-      message.success("删除成功");
-    } catch (e) {
-      console.log(e);
-      message.success("删除失败");
     }
+    message.error(data);
   }, []);
 
   return (

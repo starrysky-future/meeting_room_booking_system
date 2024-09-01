@@ -123,6 +123,10 @@ export class UserService {
       throw new BadRequestException('用户不存在');
     }
 
+    if (user.isFrozen) {
+      throw new BadRequestException('账号已被冻结');
+    }
+
     if (md5(loginUser.password) !== user.password) {
       throw new BadRequestException('密码错误');
     }

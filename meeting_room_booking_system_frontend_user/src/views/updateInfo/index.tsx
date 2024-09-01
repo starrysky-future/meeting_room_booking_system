@@ -3,7 +3,7 @@ import { InboxOutlined } from "@ant-design/icons";
 import Dragger, { DraggerProps } from "antd/es/upload/Dragger";
 import { useForm } from "antd/es/form/Form";
 import { useCallback, useEffect } from "react";
-import "./style/updateInfo.css";
+import "./index.css";
 import { useNavigate } from "react-router-dom";
 import { getUserInfo, updateUserInfo, updateUserInfoCaptcha } from "@api/index";
 import { BASE_URL } from "@api/request";

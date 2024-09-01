@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateMeetingRoomDto } from './dto/create-meeting-room.dto';
 import { UpdateMeetingRoomDto } from './dto/update-meeting-room.dto';
 import { FindOperator, Like, Repository } from 'typeorm';
@@ -54,6 +49,22 @@ export class MeetingRoomService {
   }
 
   async delete(id: number) {
+    const res = await this.meetingRoomReposition.findOne({
+      where: {
+        id,
+      },
+      relations: {
+        bookings: true,
+      },
+    });
+
+    const bookings = res.bookings;
+    for (let i = 0; i < bookings.length; i++) {
+      if (bookings[i].status === '审批通过') {
+        throw new BadRequestException('会议室还有预约，请删除通过的预约！');
+      }
+    }
+
     await this.meetingRoomReposition.delete({ id });
     return '删除成功';
   }

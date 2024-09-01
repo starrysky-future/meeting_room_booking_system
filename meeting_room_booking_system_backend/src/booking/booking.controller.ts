@@ -1,16 +1,25 @@
 import {
+  Body,
   Controller,
   DefaultValuePipe,
   Get,
   HttpStatus,
   Param,
+  Post,
   Query,
 } from '@nestjs/common';
 import { BookingService } from './booking.service';
 import { generateParseIntPipe } from 'src/utils';
-import { ApiBearerAuth, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { RequireLogin } from 'src/decorator/custom.decorator';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { RequireLogin, UserInfo } from 'src/decorator/custom.decorator';
 import { BookingListvo } from './vo/booking-list.vo';
+import { CreateBookingDto } from './dto/create-boking.dto';
 
 @ApiTags('预定模块')
 @ApiBearerAuth()
@@ -18,6 +27,22 @@ import { BookingListvo } from './vo/booking-list.vo';
 @Controller('booking')
 export class BookingController {
   constructor(private readonly bookingService: BookingService) {}
+
+  @ApiBody({
+    type: CreateBookingDto,
+  })
+  @ApiResponse({
+    type: String,
+    status: HttpStatus.OK,
+    description: 'success',
+  })
+  @Post('add')
+  async add(
+    @Body() createBookingDto: CreateBookingDto,
+    @UserInfo('userId') userId: number,
+  ) {
+    return await this.bookingService.add(createBookingDto, userId);
+  }
 
   @ApiQuery({
     name: 'pageNo',
