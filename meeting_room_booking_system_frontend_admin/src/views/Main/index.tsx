@@ -2,7 +2,6 @@ import { UserOutlined } from "@ant-design/icons";
 import { Link, Outlet } from "react-router-dom";
 import "./index.css";
 import { useEffect, useState } from "react";
-import { BASE_URL } from "@/api/request";
 
 export function Main() {
   const [headPic, setHeadPic] = useState("");
@@ -15,7 +14,7 @@ export function Main() {
         window.location.href = "/login";
       }
 
-      const pic = BASE_URL + "/" + info.headPic;
+      const pic = info.headPic;
       setHeadPic(pic);
     } else {
       window.location.href = "/login";

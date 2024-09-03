@@ -35,6 +35,7 @@ import { RefreshTokenVo } from './vo/refresh-token.vo';
 import { UserDetailVo, UserListVo } from './vo/user-info.vo';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as path from 'path';
+import { MinioService } from 'src/minio/minio.service';
 
 @ApiTags('用户管理模块')
 @Controller('user')
@@ -46,6 +47,9 @@ export class UserController {
 
   @Inject(ConfigService)
   private configService: ConfigService;
+
+  @Inject(MinioService)
+  private minioService: MinioService;
 
   @Get('init-data')
   async initData() {
@@ -326,7 +330,6 @@ export class UserController {
   @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
-      storage: storage,
       limits: {
         fileSize: 1024 * 1024 * 3,
       },
@@ -341,8 +344,19 @@ export class UserController {
       },
     }),
   )
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
-    return file.path;
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    const uniqueSuffix =
+      Date.now() +
+      '-' +
+      Math.round(Math.random() * 1e9) +
+      '-' +
+      file.originalname;
+
+    return await this.minioService.uploadFile(
+      'meeting-room-booking-system',
+      uniqueSuffix,
+      file,
+    );
   }
 
   async refreshJwtVerify(refreshToken: string, isAdmin: boolean) {

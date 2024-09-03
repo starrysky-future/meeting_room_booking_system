@@ -22,6 +22,7 @@ import {
 import 'winston-daily-rotate-file';
 import * as winston from 'winston';
 import { CustomTypeOrmLogger } from './CustomTypeOrmLogger';
+import { MinioModule } from './minio/minio.module';
 import * as path from 'path';
 
 @Module({
@@ -55,7 +56,7 @@ import * as path from 'path';
           password: configService.get('mysql_server_password'),
           database: configService.get('mysql_server_database'),
           poolSize: 10,
-          synchronize: false,
+          synchronize: true,
           logging: true,
           logger: new CustomTypeOrmLogger(logger),
           autoLoadEntities: true,
@@ -95,6 +96,7 @@ import * as path from 'path';
     MeetingRoomModule,
     BookingModule,
     StatisticModule,
+    MinioModule,
   ],
   controllers: [AppController],
   providers: [

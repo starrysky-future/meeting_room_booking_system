@@ -20,9 +20,11 @@ import { LoginUserVo } from './vo/login-user.vo';
 import { UserDetailVo } from './vo/user-info.vo';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 import { UpdateUserInfoDto } from './dto/update-user-info.dto';
+import { MinioService } from 'src/minio/minio.service';
 
 @Injectable()
 export class UserService {
+  private BUCKET_NAME = 'meeting-room-booking-system';
   private logger = new Logger();
 
   @InjectRepository(UserEntity)
@@ -39,6 +41,9 @@ export class UserService {
 
   @Inject(EmailService)
   private emailService: EmailService;
+
+  @Inject(MinioService)
+  private minioService: MinioService;
 
   async register(user: RegisterDto) {
     try {
@@ -131,6 +136,8 @@ export class UserService {
       throw new BadRequestException('密码错误');
     }
 
+    const headPic = await this.getHeadPicUrl(user.head_pic);
+
     const vo = new LoginUserVo();
     vo.userInfo = {
       id: user.id,
@@ -138,7 +145,7 @@ export class UserService {
       nickName: user.nick_name,
       email: user.email,
       phoneNumber: user.phone_number,
-      headPic: user.head_pic,
+      headPic,
       createTime: user.createTime.getTime(),
       isFrozen: user.isFrozen,
       isAdmin: user.isAdmin,
@@ -187,12 +194,14 @@ export class UserService {
       id: userId,
     });
 
+    const headPic = await this.getHeadPicUrl(user.head_pic);
+
     const vo = new UserDetailVo();
     vo.id = user.id;
     vo.username = user.username;
     vo.nickName = user.nick_name;
     vo.email = user.email;
-    vo.headPic = user.head_pic;
+    vo.headPic = headPic;
     vo.phoneNumber = user.phone_number;
     vo.isFrozen = user.isFrozen;
     vo.createTime = user.createTime.getTime();
@@ -244,7 +253,15 @@ export class UserService {
     });
 
     if (UpdateUserInfoDto.headPic) {
-      foundUser.head_pic = UpdateUserInfoDto.headPic;
+      const fileName = /[\w.-]+(?=\?)/.exec(UpdateUserInfoDto.headPic)[0];
+
+      if (foundUser.head_pic) {
+        await this.minioService.deleteFile(
+          this.BUCKET_NAME,
+          foundUser.head_pic,
+        );
+      }
+      foundUser.head_pic = fileName;
     }
     if (UpdateUserInfoDto.nickName) {
       foundUser.nick_name = UpdateUserInfoDto.nickName;
@@ -305,19 +322,7 @@ export class UserService {
       where: condition,
     });
 
-    const list = users.map((user) => {
-      const vo = new UserDetailVo();
-      vo.id = user.id;
-      vo.username = user.username;
-      vo.nickName = user.nick_name;
-      vo.email = user.email;
-      vo.headPic = user.head_pic;
-      vo.phoneNumber = user.phone_number;
-      vo.isFrozen = user.isFrozen;
-      vo.createTime = user.createTime.getTime();
-
-      return vo;
-    });
+    const list = await this.getListHeadPicUrl(users);
 
     return {
       list,
@@ -335,6 +340,43 @@ export class UserService {
     if (frontCaptcha !== captcha) {
       throw new BadRequestException('验证码不正确');
     }
+  }
+
+  async getHeadPicUrl(head_pic) {
+    if (!head_pic) return '';
+    let headPic = '';
+
+    headPic = await this.minioService.presignedGetUrl(
+      this.BUCKET_NAME,
+      head_pic,
+    );
+
+    return headPic;
+  }
+
+  async getListHeadPicUrl(users: UserEntity[]) {
+    const list: UserDetailVo[] = [];
+    const n = users.length;
+
+    for (let i = 0; i < n; i++) {
+      const user = users[i];
+      const vo = new UserDetailVo();
+
+      const headPic = await this.getHeadPicUrl(user.head_pic);
+
+      vo.id = user.id;
+      vo.username = user.username;
+      vo.nickName = user.nick_name;
+      vo.email = user.email;
+      vo.headPic = headPic;
+      vo.phoneNumber = user.phone_number;
+      vo.isFrozen = user.isFrozen;
+      vo.createTime = user.createTime.getTime();
+
+      list.push(vo);
+    }
+
+    return list;
   }
 
   async initData() {

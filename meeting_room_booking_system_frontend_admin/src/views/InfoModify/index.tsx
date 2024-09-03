@@ -19,6 +19,15 @@ export interface UserInfo {
 export function InfoModify() {
   const [form] = useForm();
 
+  // const updateLocationInfo = useCallback((values: UserInfo) => {
+  //   const value = localStorage.getItem("user_info");
+  //   if(value){
+  //     const useInfo = JSON.parse(value);
+  //     useInfo.headPic = values.headPic;
+  //   }
+
+  // }, []);
+
   const onFinish = useCallback(async (values: UserInfo) => {
     const res = await updateInfo(values);
 
@@ -131,7 +140,7 @@ const props: DraggerProps = {
   onChange(info) {
     const { status } = info.file;
     if (status === "done") {
-      onChange(info.file.response.data);
+      onChange(info.file.response.data.url);
       message.success(`${info.file.name} 文件上传成功`);
     } else if (status === "error") {
       message.error(`${info.file.name} 文件上传失败`);
@@ -153,12 +162,7 @@ export function HeadPicUpload(props: HeadPicUploadProps) {
 
   return props?.value ? (
     <div>
-      <img
-        src={BASE_URL + "/" + props.value}
-        alt="头像"
-        width="100"
-        height="100"
-      />
+      <img src={props.value} alt="头像" width="100" height="100" />
       {dragger}
     </div>
   ) : (

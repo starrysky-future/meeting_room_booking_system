@@ -45,11 +45,7 @@ export function UserManage() {
         title: "头像",
         dataIndex: "headPic",
         render: (value) => {
-          return value ? (
-            <Image width={50} height={30} src={BASE_URL + "/" + value} />
-          ) : (
-            ""
-          );
+          return value ? <Image width={50} height={30} src={value} /> : "";
         },
       },
       {
