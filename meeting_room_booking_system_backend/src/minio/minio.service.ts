@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import * as Minio from 'minio';
 import { Multer } from 'multer';
+import { log } from 'winston';
 
 @Injectable()
 export class MinioService {
@@ -62,11 +63,15 @@ export class MinioService {
     fileName: string,
     expiry: number = 24 * 60 * 60,
   ) {
-    return await this.minioClient.presignedGetObject(
-      bucketName,
-      fileName,
-      expiry,
-    );
+    try {
+      return await this.minioClient.presignedGetObject(
+        bucketName,
+        fileName,
+        expiry,
+      );
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   // 创建一个预签名的 POST 策略。这个策略定义了通过 HTTP POST 方法上传文件的规则。

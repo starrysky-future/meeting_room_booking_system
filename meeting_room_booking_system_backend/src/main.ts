@@ -15,9 +15,6 @@ async function bootstrap() {
   app.useGlobalInterceptors(new FormatResponseInterceptor());
   app.useGlobalInterceptors(new InvokeRecordInterceptor());
   app.useGlobalFilters(new CustomExceptionFilter());
-  app.useStaticAssets('uploads', {
-    prefix: '/uploads',
-  });
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
   const config = new DocumentBuilder()

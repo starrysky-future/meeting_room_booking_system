@@ -7,6 +7,8 @@ import { InboxOutlined } from "@ant-design/icons";
 import Dragger, { DraggerProps } from "antd/es/upload/Dragger";
 import { BASE_URL } from "@api/request";
 import { getUserInfo, updateInfo, updateUserInfoCaptcha } from "@/api";
+import { useDispatch } from "react-redux";
+import { setUserInfoValue } from "@/store/userInfoSlice";
 
 export interface UserInfo {
   username: string;
@@ -18,15 +20,7 @@ export interface UserInfo {
 
 export function InfoModify() {
   const [form] = useForm();
-
-  // const updateLocationInfo = useCallback((values: UserInfo) => {
-  //   const value = localStorage.getItem("user_info");
-  //   if(value){
-  //     const useInfo = JSON.parse(value);
-  //     useInfo.headPic = values.headPic;
-  //   }
-
-  // }, []);
+  const dispatch = useDispatch();
 
   const onFinish = useCallback(async (values: UserInfo) => {
     const res = await updateInfo(values);
@@ -35,6 +29,8 @@ export function InfoModify() {
       const { message: msg, data } = res.data;
       if (msg === "success") {
         message.success("用户信息更新成功");
+        setUserInfoValue;
+        dispatch(setUserInfoValue({ key: "headPic", value: values.headPic }));
       } else {
         message.error(data);
       }

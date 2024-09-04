@@ -3,9 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import "./index.css";
 import { ColumnsType } from "antd/es/table";
 import { getUserList, freeze } from "@api/index";
-import { BASE_URL } from "@api/request";
 import { useForm } from "antd/es/form/Form";
-
 interface SearchUser {
   username: string;
   nickName: string;

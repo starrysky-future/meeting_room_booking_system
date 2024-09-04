@@ -2,24 +2,41 @@ import { UserOutlined } from "@ant-design/icons";
 import { Link, Outlet } from "react-router-dom";
 import "./index.css";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserInfo } from "@/store/userInfoSlice";
+import { StateType } from "@/store/store";
 
 export function Main() {
   const [headPic, setHeadPic] = useState("");
+  const userInfo = useSelector((state: StateType) => state.userInfo);
+  const dispatch = useDispatch();
+
+  console.log("userInfo", userInfo);
 
   useEffect(() => {
-    const userInfo = localStorage.getItem("user_info");
-    if (userInfo) {
-      const info = JSON.parse(userInfo);
+    const user_Info = localStorage.getItem("user_info");
+    if (user_Info) {
+      const info = JSON.parse(user_Info);
+
       if (!info.isAdmin) {
         window.location.href = "/login";
       }
 
-      const pic = info.headPic;
-      setHeadPic(pic);
+      dispatch(setUserInfo(info));
     } else {
       window.location.href = "/login";
     }
   }, []);
+
+  useEffect(() => {
+    if (userInfo.headPic) {
+      const user_Info = localStorage.getItem("user_info");
+      const info = JSON.parse(user_Info as string);
+      info.headPic = userInfo.headPic;
+      localStorage.setItem("user_info", JSON.stringify(info));
+      setHeadPic(userInfo.headPic);
+    }
+  }, [userInfo.headPic]);
 
   return (
     <div id="main-container">
