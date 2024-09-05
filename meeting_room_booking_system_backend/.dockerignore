@@ -1,3 +1,8 @@
 node_modules/
 .vscode/
 .git/
+
+daily-log/
+migrations/
+.env-migration
+data-source.ts

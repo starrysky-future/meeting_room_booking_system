@@ -1,0 +1,49 @@
+version: '3.8'
+services:
+  nest-app:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    depends_on:
+      - mysql-container
+      - redis-container
+      - minio-container
+    environment:
+      - NODE_ENV=production
+    # restart: always
+    networks:
+      - common-network
+  mysql-container:
+    image: mysql
+    volumes:
+      - E:/docker-volumes/meeting/mysql:/var/lib/mysql
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci # 设置默认字符集
+    environment:
+      MYSQL_DATABASE: meeting_room_booking_system
+      MYSQL_ROOT_PASSWORD: shu
+    # restart: always
+    networks:
+      - common-network
+  redis-container:
+    image: redis
+    volumes:
+      - E:/docker-volumes/meeting/redis:/data
+    # restart: always
+    networks:
+      - common-network
+  minio-container:
+    image: bitnami/minio:latest
+    ports:
+      - 9000:9000
+      - 9001:9001
+    volumes:
+      - E:/docker-volumes/meeting/minio:/bitnami/minio/data
+    environment:
+      MINIO_ROOT_USER: shushu
+      MINIO_ROOT_PASSWORD: kunkunkun
+    # restart: always
+    networks:
+      - common-network
+networks:
+  common-network:
+    driver: bridge

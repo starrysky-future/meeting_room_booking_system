@@ -30,8 +30,8 @@ import * as path from 'path';
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: [
+        path.join(__dirname, `.${process.env.NODE_ENV || 'development'}.env`),
         path.join(__dirname, '.env'),
-        path.join(__dirname, '.dev.env'),
       ],
     }),
     JwtModule.registerAsync({
@@ -56,7 +56,7 @@ import * as path from 'path';
           password: configService.get('mysql_server_password'),
           database: configService.get('mysql_server_database'),
           poolSize: 10,
-          synchronize: true,
+          synchronize: Boolean(configService.get('mysql_server_synchronize')),
           logging: true,
           logger: new CustomTypeOrmLogger(logger),
           autoLoadEntities: true,
