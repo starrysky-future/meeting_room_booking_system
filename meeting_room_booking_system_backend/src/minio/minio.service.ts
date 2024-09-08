@@ -24,16 +24,15 @@ export class MinioService {
     fileName: string,
     file: Express.Multer.File,
   ) {
+    const bucketExists = await this.minioClient.bucketExists(bucketName);
+
+    if (!bucketExists) {
+      await this.minioClient.makeBucket(bucketName);
+    }
+
     await this.minioClient.putObject(bucketName, fileName, file.buffer);
 
-    const expiry = 24 * 60 * 60;
-
-    const presignedUrl = await this.minioClient.presignedUrl(
-      'GET',
-      bucketName,
-      fileName,
-      expiry,
-    );
+    const presignedUrl = await this.presignedGetUrl(bucketName, fileName);
 
     return {
       url: presignedUrl,
@@ -64,11 +63,23 @@ export class MinioService {
     expiry: number = 24 * 60 * 60,
   ) {
     try {
-      return await this.minioClient.presignedGetObject(
-        bucketName,
-        fileName,
-        expiry,
-      );
+      if (process.env.NODE_ENV === 'production') {
+        const url = await this.minioClient.presignedGetObject(
+          bucketName,
+          fileName,
+          expiry,
+        );
+
+        return url
+          .replace('minio-container:9000', 'localhost:80/minio')
+          .split('?')[0];
+      } else {
+        return await this.minioClient.presignedGetObject(
+          bucketName,
+          fileName,
+          expiry,
+        );
+      }
     } catch (error) {
       console.log(error);
     }

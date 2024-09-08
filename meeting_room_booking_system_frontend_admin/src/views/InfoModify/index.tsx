@@ -5,8 +5,12 @@ import "./index.css";
 import { layout_6_18 } from "../layout";
 import { InboxOutlined } from "@ant-design/icons";
 import Dragger, { DraggerProps } from "antd/es/upload/Dragger";
-import { BASE_URL } from "@api/request";
-import { getUserInfo, updateInfo, updateUserInfoCaptcha } from "@/api";
+import {
+  getUserInfo,
+  updateInfo,
+  updateUserInfoCaptcha,
+  uploadUrl,
+} from "@/api";
 import { useDispatch } from "react-redux";
 import { setUserInfoValue } from "@/store/userInfoSlice";
 
@@ -132,7 +136,7 @@ let onChange: Function;
 
 const props: DraggerProps = {
   name: "file",
-  action: BASE_URL + "/user/upload",
+  action: uploadUrl,
   onChange(info) {
     const { status } = info.file;
     if (status === "done") {

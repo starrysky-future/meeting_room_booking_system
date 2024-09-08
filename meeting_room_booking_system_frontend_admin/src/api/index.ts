@@ -83,8 +83,6 @@ export async function getBookingList(searchBookingParams: SearchBookingParams) {
   let bookingTimeRangeStart;
   let bookingTimeRangeEnd;
 
-  console.log("searchBookingParams", searchBookingParams);
-
   if (
     searchBookingParams.rangeStartDate &&
     searchBookingParams.rangeStartTime
@@ -155,3 +153,5 @@ export async function userBookingCount(startTime: string, endTime: string) {
     },
   });
 }
+
+export const uploadUrl = import.meta.env.VITE_BASE_URL + "/user/upload";

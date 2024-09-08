@@ -1,10 +1,8 @@
 import { message } from "antd";
 import axios, { AxiosRequestConfig } from "axios";
 
-export const BASE_URL = "http://localhost:3000";
-
 const axiosInstance = axios.create({
-  baseURL: BASE_URL,
+  baseURL: import.meta.env.VITE_BASE_URL,
   timeout: 3000,
 });
 

@@ -1,5 +1,14 @@
 version: '3.8'
 services:
+  fe-admin-app:
+    image: fe-admin-app:admin
+    ports:
+      - 80:80
+    depends_on:
+      - nest-app
+    # restart: always
+    networks:
+      - common-network
   nest-app:
     build:
       context: ./
@@ -7,7 +16,6 @@ services:
     depends_on:
       - mysql-container
       - redis-container
-      - minio-container
     environment:
       - NODE_ENV=production
     # restart: always
@@ -18,6 +26,8 @@ services:
     volumes:
       - E:/docker-volumes/meeting/mysql:/var/lib/mysql
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci # 设置默认字符集
+    ports:
+      - "3306:3306"
     environment:
       MYSQL_DATABASE: meeting_room_booking_system
       MYSQL_ROOT_PASSWORD: shu

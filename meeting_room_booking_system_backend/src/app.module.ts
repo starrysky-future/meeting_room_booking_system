@@ -56,7 +56,7 @@ import * as path from 'path';
           password: configService.get('mysql_server_password'),
           database: configService.get('mysql_server_database'),
           poolSize: 10,
-          synchronize: Boolean(configService.get('mysql_server_synchronize')),
+          synchronize: configService.get('mysql_server_synchronize') === 'true',
           logging: true,
           logger: new CustomTypeOrmLogger(logger),
           autoLoadEntities: true,
